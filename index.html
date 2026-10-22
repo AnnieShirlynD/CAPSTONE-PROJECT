@@ -1,0 +1,919 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08111f">
+<meta name="description" content="CyberGuard Cloud URL threat detection, security analysis and cyber threat prevention dashboard">
+<title>CyberGuard Cloud | Threat Prevention System</title>
+
+<style>
+:root {
+  --bg: #08111f;
+  --panel: #111e30;
+  --panel2: #0b1728;
+  --border: #283a52;
+  --text: #edf4ff;
+  --muted: #9bacbf;
+  --blue: #5ca5ff;
+  --green: #3cdeb0;
+  --yellow: #ffc857;
+  --red: #ff6878;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+button, input { font: inherit; }
+button { cursor: pointer; }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 16px 5%;
+  background: #0b1626;
+  border-bottom: 1px solid var(--border);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: bold;
+  font-size: 19px;
+}
+.logo {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--green);
+  background: #12352f;
+  font-size: 25px;
+}
+.brand small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+.status {
+  color: var(--green);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+nav {
+  display: flex;
+  gap: 20px;
+  padding: 12px 5%;
+  overflow-x: auto;
+  background: #0c192a;
+  border-bottom: 1px solid var(--border);
+}
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+  font-size: 13px;
+}
+nav a:hover { color: var(--blue); }
+.container {
+  width: min(1120px, 92%);
+  margin: auto;
+}
+.hero { padding: 44px 0 26px; }
+.eyebrow {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+h1 {
+  max-width: 800px;
+  margin: 8px 0;
+  font-size: clamp(30px, 5vw, 48px);
+  line-height: 1.2;
+}
+h1 span { color: var(--blue); }
+.subtitle { color: var(--muted); max-width: 720px; }
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 23px;
+  margin-bottom: 22px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 20px;
+}
+.section-title h2, .panel h2 { margin-top: 0; }
+.section-title h2 { margin-bottom: 2px; font-size: 19px; }
+.section-title p { margin: 0; color: var(--muted); font-size: 13px; }
+.icon {
+  display: grid;
+  place-items: center;
+  min-width: 43px;
+  height: 43px;
+  border-radius: 11px;
+  color: var(--blue);
+  background: #192e49;
+  font-size: 24px;
+}
+label { display: block; margin-bottom: 7px; font-size: 13px; }
+.input-row { display: flex; gap: 10px; }
+input[type="text"], input[type="search"] {
+  width: 100%;
+  min-width: 0;
+  padding: 13px;
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+input:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+.btn {
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--blue);
+  color: #061326;
+  font-weight: bold;
+}
+.btn:disabled { opacity: .6; cursor: wait; }
+.btn-secondary {
+  background: #26374d;
+  color: var(--text);
+}
+.btn-danger {
+  background: #45232f;
+  color: #ffb4be;
+}
+.hint, .muted { color: var(--muted); font-size: 12px; }
+.quick-tests { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.quick-tests button {
+  padding: 7px 10px;
+  background: #192a40;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 12px;
+}
+.result {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+.result.low { border-color: var(--green); }
+.result.medium { border-color: var(--yellow); }
+.result.high { border-color: var(--red); }
+.result h3 { margin-top: 0; }
+.result ul { padding-left: 20px; }
+.hidden { display: none !important; }
+.score-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+.progress {
+  height: 9px;
+  margin: 8px 0 16px;
+  overflow: hidden;
+  background: #26374d;
+  border-radius: 20px;
+}
+.progress div {
+  height: 100%;
+  width: 0;
+  background: var(--green);
+  transition: width .3s;
+}
+.result.medium .progress div { background: var(--yellow); }
+.result.high .progress div { background: var(--red); }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 22px 0;
+}
+.stat {
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.stat-label { color: var(--muted); font-size: 12px; }
+.stat-value { font-size: 29px; font-weight: bold; }
+.stat-note { color: var(--muted); font-size: 11px; }
+.blue { color: var(--blue); }
+.green { color: var(--green); }
+.yellow { color: var(--yellow); }
+.red { color: var(--red); }
+.grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.card-list { display: grid; gap: 12px; }
+.info-card {
+  padding: 15px;
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  border-radius: 10px;
+}
+.info-card h3 { margin: 0 0 5px; font-size: 15px; }
+.info-card p { margin: 0; color: var(--muted); font-size: 13px; }
+.info-card .symbol { margin-right: 7px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
+th, td { padding: 13px 10px; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: normal; }
+td:first-child { max-width: 260px; overflow-wrap: anywhere; }
+.tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.tag.low { color: var(--green); background: #12352f; }
+.tag.medium { color: var(--yellow); background: #3a3020; }
+.tag.high { color: var(--red); background: #3a202c; }
+.empty { text-align: center; color: var(--muted); padding: 24px; }
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.history-header h2 { margin-bottom: 0; font-size: 19px; }
+.checklist { display: grid; gap: 13px; }
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.check-item input { margin-top: 5px; accent-color: var(--green); }
+.check-item strong { display: block; font-size: 13px; }
+.check-item span { display: block; color: var(--muted); font-size: 12px; }
+.check-summary { color: var(--green); font-size: 13px; margin-top: 14px; }
+.notice {
+  padding: 17px;
+  background: #30291a;
+  border: 1px solid #5b4929;
+  border-radius: 10px;
+  margin-bottom: 22px;
+}
+.notice strong { color: var(--yellow); }
+.notice p { color: #e0d4b7; font-size: 12px; margin-bottom: 0; }
+footer {
+  padding: 25px 5%;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+@media(max-width: 760px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-two { grid-template-columns: 1fr; }
+  .topbar { padding: 13px 4%; }
+  .brand { font-size: 15px; }
+  .container { width: 94%; }
+}
+@media(max-width: 480px) {
+  .input-row { flex-direction: column; }
+  .input-row .btn { width: 100%; }
+  .panel { padding: 16px; }
+  .history-header { align-items: flex-start; flex-direction: column; }
+  .status { font-size: 9px; }
+}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">🛡</div>
+    <div>CyberGuard Cloud<small>URL SECURITY PLATFORM</small></div>
+  </div>
+  <div class="status"><span class="dot"></span>DEMO MODE</div>
+</header>
+
+<nav>
+  <a href="#dashboard">Dashboard</a>
+  <a href="#scanner">URL Scanner</a>
+  <a href="#prevention">Prevention Center</a>
+  <a href="#education">Threat Library</a>
+  <a href="#history">Scan History</a>
+</nav>
+
+<main class="container">
+  <section class="hero" id="dashboard">
+    <p class="eyebrow">CLOUD-INTEGRATED CYBER DEFENSE</p>
+    <h1>Detect threats. <span>Prevent attacks.</span></h1>
+    <p class="subtitle">
+      Analyze suspicious website addresses, understand potential risks,
+      learn cyber safety practices and maintain a local record of scans.
+    </p>
+  </section>
+
+  <section class="stats">
+    <article class="stat">
+      <div class="stat-label">TOTAL SCANS</div>
+      <div class="stat-value blue" id="totalScans">0</div>
+      <div class="stat-note">Saved scan records</div>
+    </article>
+    <article class="stat">
+      <div class="stat-label">LOW RISK</div>
+      <div class="stat-value green" id="lowScans">0</div>
+      <div class="stat-note">Few configured warning signs</div>
+    </article>
+    <article class="stat">
+      <div class="stat-label">MEDIUM RISK</div>
+      <div class="stat-value yellow" id="mediumScans">0</div>
+      <div class="stat-note">Review before proceeding</div>
+    </article>
+    <article class="stat">
+      <div class="stat-label">HIGH RISK</div>
+      <div class="stat-value red" id="highScans">0</div>
+      <div class="stat-note">Do not proceed without verification</div>
+    </article>
+  </section>
+
+  <section class="panel" id="scanner">
+    <div class="section-title">
+      <div class="icon">⌕</div>
+      <div>
+        <h2>Intelligent URL Scanner</h2>
+        <p>Examine URL structure for common warning signs.</p>
+      </div>
+    </div>
+
+    <form id="scanForm">
+      <label for="urlInput">Enter website address</label>
+      <div class="input-row">
+        <input id="urlInput" type="text"
+          placeholder="https://example.com"
+          autocomplete="url" required>
+        <button class="btn" id="scanButton" type="submit">Analyze URL ↗</button>
+      </div>
+      <p class="hint">
+        Supports HTTP and HTTPS URLs. The scanner does not open the submitted site.
+      </p>
+    </form>
+
+    <div class="quick-tests">
+      <button type="button" data-url="https://example.com">Test ordinary URL</button>
+      <button type="button" data-url="http://192.168.1.1/login/verify">Test warning patterns</button>
+      <button type="button" data-url="not-a-valid-url">Test invalid input</button>
+    </div>
+
+    <div id="result" class="result hidden" aria-live="polite"></div>
+  </section>
+
+  <section class="grid-two">
+    <div class="panel" id="prevention">
+      <div class="section-title">
+        <div class="icon">⛨</div>
+        <div>
+          <h2>Cyber Threat Prevention</h2>
+          <p>Actions to take when a URL looks suspicious.</p>
+        </div>
+      </div>
+      <div class="card-list">
+        <article class="info-card">
+          <h3><span class="symbol">🚫</span>Block risky destinations</h3>
+          <p>Do not open a URL flagged as suspicious. This demo warns users but does not block websites at browser or network level.</p>
+        </article>
+        <article class="info-card">
+          <h3><span class="symbol">🔐</span>Protect credentials</h3>
+          <p>Never enter passwords, OTPs, recovery codes or banking details after following an unexpected message link.</p>
+        </article>
+        <article class="info-card">
+          <h3><span class="symbol">🛡</span>Use verified security services</h3>
+          <p>Check suspicious URLs with your organization's security team or an approved threat-intelligence service.</p>
+        </article>
+        <article class="info-card">
+          <h3><span class="symbol">📣</span>Report phishing</h3>
+          <p>Report suspicious emails, messages and websites to the relevant service provider or security administrator.</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="panel" id="education">
+      <div class="section-title">
+        <div class="icon">ⓘ</div>
+        <div>
+          <h2>Threat Intelligence Library</h2>
+          <p>Understand common online threats.</p>
+        </div>
+      </div>
+      <div class="card-list">
+        <article class="info-card">
+          <h3>Phishing</h3>
+          <p>Fraudulent pages and messages designed to steal login details or financial information. Verify the destination independently.</p>
+        </article>
+        <article class="info-card">
+          <h3>Typosquatting</h3>
+          <p>Domains that imitate familiar brands using misspellings or deceptive characters. Check the exact domain name.</p>
+        </article>
+        <article class="info-card">
+          <h3>Malicious redirects</h3>
+          <p>Links that send visitors to unexpected destinations. Avoid unknown short links and inspect destinations with trusted tools.</p>
+        </article>
+        <article class="info-card">
+          <h3>Credential theft</h3>
+          <p>Fake login pages that capture passwords. Use a password manager and multifactor authentication.</p>
+        </article>
+        <article class="info-card">
+          <h3>Malware distribution</h3>
+          <p>Websites that encourage harmful downloads. Keep software updated and use reputable endpoint protection.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-title">
+      <div class="icon">✓</div>
+      <div>
+        <h2>Personal Security Checklist</h2>
+        <p>Tick each action after you complete it. Progress is saved in this browser.</p>
+      </div>
+    </div>
+
+    <div class="checklist" id="checklist">
+      <label class="check-item">
+        <input type="checkbox" data-check="domain">
+        <div><strong>Verify the domain name</strong><span>Check spelling and the actual destination before signing in.</span></div>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" data-check="mfa">
+        <div><strong>Enable multifactor authentication</strong><span>Add an extra authentication step to important accounts.</span></div>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" data-check="updates">
+        <div><strong>Update devices and browsers</strong><span>Install security patches promptly.</span></div>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" data-check="passwords">
+        <div><strong>Use unique passwords</strong><span>Use a reputable password manager and never share OTPs.</span></div>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" data-check="report">
+        <div><strong>Know how to report phishing</strong><span>Use the reporting process provided by your email or security administrator.</span></div>
+      </label>
+    </div>
+    <div class="check-summary" id="checkSummary" aria-live="polite">0 of 5 completed</div>
+  </section>
+
+  <section class="panel" id="history">
+    <div class="history-header">
+      <div>
+        <h2>Scan History and Audit Records</h2>
+        <p class="muted">Stored in this browser only; not shared with a cloud database.</p>
+      </div>
+      <div>
+        <button class="btn btn-secondary" id="exportHistory" type="button">Export CSV</button>
+        <button class="btn btn-danger" id="clearHistory" type="button">Clear</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>URL</th><th>Score</th><th>Risk</th><th>Time</th></tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr><td colspan="4" class="empty">No scans have been recorded.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="notice">
+    <strong>Important security and privacy limitation</strong>
+    <p>
+      This GitHub Pages demo uses heuristic rules and does not query a live
+      threat-intelligence database, inspect website content, or block network
+      traffic. A low score does not mean a URL is safe. Browser history and
+      checklist data are stored locally. Do not submit private or sensitive URLs.
+      For production use, integrate a server-side API, shared database,
+      authentication, rate limiting and real prevention controls.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <p>CyberGuard Cloud | URL Detection and Cyber Threat Prevention System</p>
+  <p>Academic project prototype · Rule-based detection</p>
+</footer>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "cyberguard_cloud_scans_v2";
+const CHECK_KEY = "cyberguard_security_checklist_v1";
+
+const form = document.getElementById("scanForm");
+const urlInput = document.getElementById("urlInput");
+const scanButton = document.getElementById("scanButton");
+const resultBox = document.getElementById("result");
+const historyBody = document.getElementById("historyBody");
+
+function readJSON(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) || "null");
+    return value === null ? fallback : value;
+  } catch {
+    return fallback;
+  }
+}
+
+function getHistory() {
+  const value = readJSON(STORAGE_KEY, []);
+  return Array.isArray(value) ? value.slice(0, 100) : [];
+}
+
+function analyzeURL(input) {
+  let url;
+
+  try {
+    url = new URL(input.trim());
+  } catch {
+    return { valid: false, message: "Enter a valid URL such as https://example.com." };
+  }
+
+  if (!["http:", "https:"].includes(url.protocol) || !url.hostname) {
+    return { valid: false, message: "Only HTTP and HTTPS URLs are accepted." };
+  }
+
+  const host = url.hostname.toLowerCase();
+  const full = url.href.toLowerCase();
+  const reasons = [];
+  const recommendations = [];
+  let score = 0;
+
+  function flag(points, reason, recommendation) {
+    score += points;
+    reasons.push(reason);
+    recommendations.push(recommendation);
+  }
+
+  const ipv4 = /^(?:\d{1,3}\.){3}\d{1,3}$/.test(host) &&
+    host.split(".").every(part => Number(part) <= 255);
+
+  if (ipv4) {
+    flag(25, "The hostname is an IP address.",
+      "Verify the address with the organization through a trusted channel.");
+  }
+
+  if (url.username || url.password) {
+    flag(30, "The URL contains embedded username or password fields.",
+      "Do not follow the link. Verify the destination independently.");
+  }
+
+  if (host.split(".").some(label => label.startsWith("xn--"))) {
+    flag(20, "The domain includes an internationalized punycode label.",
+      "Inspect the exact domain carefully for look-alike characters.");
+  }
+
+  const sensitiveWords = [
+    "login", "verify", "password", "credential",
+    "secure", "account", "wallet", "update",
+    "banking", "signin", "confirm"
+  ];
+
+  const matched = sensitiveWords.filter(word => full.includes(word));
+
+  if (matched.length) {
+    flag(Math.min(matched.length * 8, 24),
+      "Potentially sensitive keywords: " + matched.join(", ") + ".",
+      "If a login is required, navigate to the service using its official app or a saved bookmark.");
+  }
+
+  if (host.split(".").length >= 5) {
+    flag(15, "The hostname has many subdomain labels.",
+      "Identify the registered domain and confirm it belongs to the intended organization.");
+  }
+
+  if (url.href.length > 150) {
+    flag(10, "The URL is unusually long.",
+      "Avoid opening unexpected links with complex or obfuscated paths.");
+  }
+
+  if (url.protocol === "http:") {
+    flag(10, "The URL uses unencrypted HTTP.",
+      "Prefer the organization's verified HTTPS website; HTTPS alone does not prove legitimacy.");
+  }
+
+  const shorteners = [
+    "bit.ly", "tinyurl.com", "t.co",
+    "is.gd", "cutt.ly", "shorturl.at"
+  ];
+
+  if (shorteners.includes(host)) {
+    flag(20, "The hostname belongs to a common URL-shortening service.",
+      "Verify the destination with an approved link-expansion or security service.");
+  }
+
+  if ((host.match(/-/g) || []).length >= 4) {
+    flag(10, "The hostname contains several hyphens.",
+      "Check for misspellings and brand impersonation.");
+  }
+
+  score = Math.min(score, 100);
+
+  const level = score >= 50 ? "high" :
+                score >= 25 ? "medium" : "low";
+
+  if (reasons.length === 0) {
+    reasons.push("No configured URL-pattern warning signs were found.");
+    recommendations.push(
+      "This result is not proof of safety. Verify the domain and use a trusted threat-intelligence checker."
+    );
+  }
+
+  if (level === "high") {
+    recommendations.unshift(
+      "PREVENTION: Do not open this URL or enter credentials until it has been independently verified."
+    );
+  } else if (level === "medium") {
+    recommendations.unshift(
+      "PREVENTION: Pause and verify the destination through a trusted channel before proceeding."
+    );
+  } else {
+    recommendations.unshift(
+      "PREVENTION: Continue to exercise caution. This scanner cannot confirm that the URL is safe."
+    );
+  }
+
+  return {
+    valid: true,
+    url: url.href,
+    score,
+    level,
+    reasons,
+    recommendations,
+    time: new Date().toLocaleString()
+  };
+}
+
+function makeElement(tag, text, className) {
+  const element = document.createElement(tag);
+  element.textContent = text;
+  if (className) element.className = className;
+  return element;
+}
+
+function showResult(data) {
+  resultBox.replaceChildren();
+  resultBox.className = "result";
+
+  if (!data.valid) {
+    resultBox.classList.add("medium");
+    resultBox.append(
+      makeElement("h3", "Invalid URL"),
+      makeElement("p", data.message)
+    );
+    return;
+  }
+
+  resultBox.classList.add(data.level);
+
+  const heading = data.level === "high"
+    ? "HIGH RISK — REVIEW REQUIRED"
+    : data.level === "medium"
+      ? "MEDIUM RISK — USE CAUTION"
+      : "LOW RISK — NO OBVIOUS WARNING SIGNS";
+
+  resultBox.appendChild(makeElement("h3", heading));
+  resultBox.appendChild(makeElement("p", "URL: " + data.url));
+
+  const scoreLine = makeElement("div", "", "score-line");
+  scoreLine.append(
+    makeElement("span", "Heuristic risk score"),
+    makeElement("strong", data.score + "/100")
+  );
+  resultBox.appendChild(scoreLine);
+
+  const progress = makeElement("div", "", "progress");
+  const fill = makeElement("div", "");
+  fill.style.width = data.score + "%";
+  progress.appendChild(fill);
+  resultBox.appendChild(progress);
+
+  resultBox.appendChild(makeElement("h4", "Detection findings"));
+
+  const reasons = document.createElement("ul");
+  data.reasons.forEach(reason => {
+    reasons.appendChild(makeElement("li", reason));
+  });
+  resultBox.appendChild(reasons);
+
+  resultBox.appendChild(makeElement("h4", "Recommended prevention actions"));
+
+  const actions = document.createElement("ul");
+  data.recommendations.forEach(action => {
+    actions.appendChild(makeElement("li", action));
+  });
+  resultBox.appendChild(actions);
+
+  resultBox.appendChild(makeElement(
+    "p",
+    "Limit: These rules analyze URL structure only. They do not verify the site against known malware or phishing databases."
+  ));
+}
+
+function saveScan(data) {
+  const history = getHistory();
+
+  history.unshift({
+    url: data.url,
+    score: data.score,
+    level: data.level,
+    time: data.time
+  });
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 100)));
+  } catch {
+    // Results can still be displayed if browser storage is unavailable.
+  }
+
+  renderDashboard();
+}
+
+function renderDashboard() {
+  const history = getHistory();
+
+  document.getElementById("totalScans").textContent = history.length;
+  document.getElementById("lowScans").textContent =
+    history.filter(x => x.level === "low").length;
+  document.getElementById("mediumScans").textContent =
+    history.filter(x => x.level === "medium").length;
+  document.getElementById("highScans").textContent =
+    history.filter(x => x.level === "high").length;
+
+  historyBody.replaceChildren();
+
+  if (!history.length) {
+    const row = document.createElement("tr");
+    row.appendChild(makeElement("td", "No scans have been recorded.", "empty"));
+    row.firstChild.colSpan = 4;
+    historyBody.appendChild(row);
+    return;
+  }
+
+  history.forEach(item => {
+    const row = document.createElement("tr");
+    const urlCell = makeElement("td", item.url);
+    const scoreCell = makeElement("td", item.score + "/100");
+    const riskCell = makeElement("td");
+    riskCell.appendChild(makeElement("span", item.level.toUpperCase(), "tag " + item.level));
+    const timeCell = makeElement("td", item.time);
+    row.append(urlCell, scoreCell, riskCell, timeCell);
+    historyBody.appendChild(row);
+  });
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+
+  scanButton.disabled = true;
+  scanButton.textContent = "Analyzing...";
+
+  try {
+    const data = analyzeURL(urlInput.value);
+    showResult(data);
+    if (data.valid) saveScan(data);
+  } catch {
+    resultBox.className = "result medium";
+    resultBox.textContent = "Unable to complete the scan. Please try again.";
+  } finally {
+    scanButton.disabled = false;
+    scanButton.textContent = "Analyze URL ↗";
+  }
+});
+
+document.querySelectorAll("[data-url]").forEach(button => {
+  button.addEventListener("click", () => {
+    urlInput.value = button.dataset.url;
+    if (button.dataset.url !== "not-a-valid-url") {
+      form.requestSubmit();
+    } else {
+      showResult(analyzeURL(button.dataset.url));
+    }
+    document.getElementById("scanner").scrollIntoView({ behavior: "smooth" });
+  });
+});
+
+document.getElementById("clearHistory").addEventListener("click", () => {
+  if (!confirm("Delete all scan records saved in this browser?")) return;
+
+  localStorage.removeItem(STORAGE_KEY);
+  renderDashboard();
+  resultBox.className = "result hidden";
+  resultBox.replaceChildren();
+});
+
+document.getElementById("exportHistory").addEventListener("click", () => {
+  const history = getHistory();
+
+  if (!history.length) {
+    alert("There are no scan records to export.");
+    return;
+  }
+
+  const columns = ["URL", "Score", "Risk", "Time"];
+
+  function csvCell(value) {
+    let text = String(value ?? "");
+    // Prevent spreadsheet formula injection in exported cells.
+    if (/^[\s]*[=+\-@\t\r]/.test(text)) text = "'" + text;
+    return '"' + text.replace(/"/g, '""') + '"';
+  }
+
+  const csv = [
+    columns.map(csvCell).join(","),
+    ...history.map(item => [
+      item.url, item.score, item.level, item.time
+    ].map(csvCell).join(","))
+  ].join("\r\n");
+
+  const blob = new Blob(["\uFEFF" + csv], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const link = document.createElement("a");
+  const objectURL = URL.createObjectURL(blob);
+  link.href = objectURL;
+  link.download = "cyberguard-scan-history.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(objectURL);
+});
+
+function loadChecklist() {
+  const saved = readJSON(CHECK_KEY, {});
+
+  document.querySelectorAll("[data-check]").forEach(box => {
+    box.checked = saved[box.dataset.check] === true;
+
+    box.addEventListener("change", () => {
+      const current = readJSON(CHECK_KEY, {});
+      current[box.dataset.check] = box.checked;
+
+      try {
+        localStorage.setItem(CHECK_KEY, JSON.stringify(current));
+      } catch {}
+
+      updateChecklist();
+    });
+  });
+
+  updateChecklist();
+}
+
+function updateChecklist() {
+  const boxes = [...document.querySelectorAll("[data-check]")];
+  const completed = boxes.filter(box => box.checked).length;
+
+  document.getElementById("checkSummary").textContent =
+    completed + " of " + boxes.length + " completed";
+}
+
+renderDashboard();
+loadChecklist();
+</script>
+</body>
+</html>
